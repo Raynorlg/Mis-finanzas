@@ -3,10 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1B4FA8">
+<meta name="theme-color" content="#EDF1EF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1311" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mis Finanzas">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="application-name" content="Mis Finanzas">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Mis Finanzas</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<style>:root{color-scheme:light}html,body{margin:0}</style>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{margin:0}</style>
 <style>
 /* Layout: una hoja de cálculo en dos mitades. Arriba el presupuesto del mes, abajo el registro diario; 12 pestañas de mes desde noviembre. */
 :root{
@@ -207,7 +216,7 @@ table.log tr.empty td{text-align:center;color:var(--muted);padding:26px 16px;fon
 
 @media (max-width:1000px){.tabs{grid-template-columns:repeat(7,minmax(0,1fr))}}
 @media (max-width:420px){.tabs{gap:4px}.tab b{letter-spacing:.03em;font-size:11px}.tab span{font-size:9px}}
-@media (max-width:820px){
+@media (max-width:640px){
   .mhead{grid-template-columns:1fr}
   .addrow{grid-template-columns:1fr 1fr}
   .addrow .grow{grid-column:1/-1}
@@ -216,6 +225,45 @@ table.log tr.empty td{text-align:center;color:var(--muted);padding:26px 16px;fon
   .sum>div:first-child{border-top:0}
   .newcat .fld{width:100%}
   .legend{flex-direction:column;align-items:stretch}
+}
+@media (max-width:640px){
+  .scroll{overflow-x:visible}
+  table.bud{min-width:0}
+  table.bud thead,table.log thead{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  table.bud,table.bud tbody,table.bud tfoot,table.log,table.log tbody{display:block;min-width:0}
+  table.bud tr{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;padding:14px 16px;border-bottom:1px solid var(--line2)}
+  table.bud th[scope="row"]{grid-column:1/-1;position:static;min-width:0;padding:0;background:transparent;border:0}
+  table.bud tfoot th[scope="row"]{background:transparent}
+  table.bud th:first-child,table.bud td:first-child{padding-left:0}
+  table.bud td{display:block;text-align:left;padding:0;border:0;background:transparent}
+  table.bud td[data-label]::before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  table.bud td.fig{padding-top:0}
+  table.bud td .eur{display:block}
+  table.bud td .num{width:100%}
+  table.bud td .sub{justify-content:flex-start}
+  table.bud td.msg{grid-column:1/-1;order:5;padding-top:0}
+  table.bud tfoot tr{background:var(--surface2)}
+  table.bud tfoot tr.asg th,table.bud tfoot tr.asg td{border:0;padding-top:0}
+  table.log tr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 8px;padding:12px 16px;border-bottom:1px solid var(--line2);align-items:center}
+  table.log td,table.log td:first-child,table.log td.r,table.log td.x{display:block;width:auto;padding:0;text-align:left}
+  table.log td:nth-child(1){grid-column:1;grid-row:1}
+  table.log td:nth-child(4){grid-column:2;grid-row:1}
+  table.log td:nth-child(5){grid-column:3;grid-row:1}
+  table.log td:nth-child(2){grid-column:1/-1;grid-row:2}
+  table.log td:nth-child(3){grid-column:1/-1;grid-row:3}
+  table.log tr.empty{display:block}
+  table.log tr.empty td{padding:22px 8px;text-align:center}
+  table.log td.r .num{width:130px}
+  .cell{border-color:var(--line)}
+}
+@media (pointer:coarse){
+  input,select,textarea{font-size:16px!important}
+  .big .num{font-size:28px!important}
+  .num,.cell,.fld,select.cell{min-height:42px}
+  .pct{width:72px;min-height:36px}
+  .tab{min-height:50px}
+  .btn,.seg button,.swap,.icon{min-height:42px}
+  .icon{width:40px}
 }
 @media (prefers-reduced-motion:reduce){.meter i,.bar i{transition:none}}
 </style>
@@ -228,6 +276,7 @@ table.log tr.empty td{text-align:center;color:var(--muted);padding:26px 16px;fon
       <h1>Mis finanzas</h1>
     </div>
     <div class="hright">
+      <button type="button" class="btn ghost" id="instBtn" hidden>Instalar app</button>
       <div class="seg" role="group" aria-label="Moneda"><span>Moneda</span><div>
         <button type="button" data-act="cur" data-cur="EUR">€ Euro</button>
         <button type="button" data-act="cur" data-cur="USD">$ Dólar</button></div></div>
@@ -252,8 +301,8 @@ table.log tr.empty td{text-align:center;color:var(--muted);padding:26px 16px;fon
 </main>
 <div class="toast" id="toast" hidden role="status"><span id="toastMsg"></span><button type="button" id="toastBtn" hidden></button></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
 (function(){
 'use strict';
@@ -459,14 +508,14 @@ function rowHtml(c){
   var del=c.custom?'<button type="button" class="x-btn" data-act="delcat" data-id="'+id+'">Quitar</button>':'';
   return '<tr>'+
     '<th scope="row"><div class="cname"><span>'+nm+'</span>'+tag+del+'</div><div class="meter" data-out="meter:'+id+'"><i></i></div></th>'+
-    '<td><div class="eur"><input class="num" data-f="budget" data-id="'+id+'" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Presupuesto de '+nm+'"></div>'+
+    '<td data-label="Presupuesto"><div class="eur"><input class="num" data-f="budget" data-id="'+id+'" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Presupuesto de '+nm+'"></div>'+
       '<div class="sub"><button type="button" class="mini" data-act="resetbudget" data-id="'+id+'" hidden title="Volver al monto sugerido" aria-label="Volver al monto sugerido de '+nm+'">↺</button>'+
       '<input class="pct" data-f="pct" data-id="'+id+'" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Porcentaje del ingreso para '+nm+'"><span>%</span></div></td>'+
-    '<td><div class="eur"><input class="num" data-f="manual" data-id="'+id+'" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Registrado en '+nm+'"></div></td>'+
-    '<td class="fig" data-out="auto:'+id+'">—</td>'+
-    '<td class="fig strong" data-out="real:'+id+'">—</td>'+
-    '<td class="fig" data-out="diff:'+id+'">—</td>'+
-    '<td class="fig" data-out="share:'+id+'">—</td></tr>';
+    '<td data-label="Registrado"><div class="eur"><input class="num" data-f="manual" data-id="'+id+'" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Registrado en '+nm+'"></div></td>'+
+    '<td class="fig" data-label="Día a día" data-out="auto:'+id+'">—</td>'+
+    '<td class="fig strong" data-label="Real" data-out="real:'+id+'">—</td>'+
+    '<td class="fig" data-label="Diferencia" data-out="diff:'+id+'">—</td>'+
+    '<td class="fig" data-label="% del ingreso" data-out="share:'+id+'">—</td></tr>';
 }
 var outEls={};
 function renderSheet(){
@@ -489,10 +538,10 @@ function renderSheet(){
     '<th title="Verde: a tu favor. Rojo: te pasaste o te falta.">Diferencia</th><th>% del ingreso</th></tr></thead>'+
     '<tbody>'+S.cats.map(rowHtml).join('')+'</tbody>'+
     '<tfoot><tr class="tot"><th scope="row">Total gastos y deudas</th>'+
-      '<td class="fig" data-out="tot:budget"></td><td class="fig" data-out="tot:manual"></td><td class="fig" data-out="tot:auto"></td>'+
-      '<td class="fig strong" data-out="tot:real"></td><td class="fig" data-out="tot:diff"></td><td class="fig" data-out="tot:share"></td></tr>'+
-    '<tr class="asg"><th scope="row">Presupuesto asignado (con ahorro)</th><td class="fig" data-out="asg:budget"></td>'+
-      '<td class="msg" colspan="4" data-out="asg:msg"></td><td class="fig" data-out="asg:share"></td></tr></tfoot></table></div>'+
+      '<td class="fig" data-label="Presupuesto" data-out="tot:budget"></td><td class="fig" data-label="Registrado" data-out="tot:manual"></td><td class="fig" data-label="Día a día" data-out="tot:auto"></td>'+
+      '<td class="fig strong" data-label="Real" data-out="tot:real"></td><td class="fig" data-label="Diferencia" data-out="tot:diff"></td><td class="fig" data-label="% del ingreso" data-out="tot:share"></td></tr>'+
+    '<tr class="asg"><th scope="row">Presupuesto asignado (con ahorro)</th><td class="fig" data-label="Presupuesto" data-out="asg:budget"></td>'+
+      '<td class="msg" colspan="4" data-out="asg:msg"></td><td class="fig" data-label="% del ingreso" data-out="asg:share"></td></tr></tfoot></table></div>'+
   '<p class="legend"><span>Diferencia en verde: gastaste menos de lo previsto, o ahorraste e ingresaste más. En rojo: te pasaste o te falta.</span>'+
     '<form class="newcat" id="newCat" autocomplete="off"><input class="fld" id="newCatName" maxlength="40" placeholder="Nueva categoría de gasto" aria-label="Nombre de la nueva categoría"><button class="btn" type="submit">Añadir</button></form></p>'+
   '<div class="sum">'+
@@ -955,6 +1004,13 @@ function downloadReport(){
 setStatus('loading');
 fullRender();
 initDb();
+function route(){
+  var h=location.hash.replace('#','');
+  if(h==='gasto'){var f=$('#a-desc');if(f){f.scrollIntoView({block:'center'});f.focus();}}
+  else if(h==='conversor'){var d=$('#conv');if(d){d.open=true;d.scrollIntoView({block:'start'});var i=$('#cv-in');if(i)i.focus();}}
+}
+window.addEventListener('hashchange',route);
+route();
 document.addEventListener('input',function(e){if(e.target&&e.target.id==='cv-in')convCompute();});
 convUi();
 fx.state='loading';
@@ -962,6 +1018,26 @@ loadFx();
 setInterval(function(){if(!document.hidden&&Date.now()-fx.at>30*60*1000)loadFx();},5*60*1000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&Date.now()-fx.at>30*60*1000)loadFx();});
 if(window.claude&&window.claude.use){window.claude.use('downloads').then(function(d){dl=d;syncDl();}).catch(function(){});}
+})();
+</script>
+<script>
+(function(){
+  var btn=document.getElementById('instBtn'),dp=null;
+  function say(t){var m=document.getElementById('toastMsg'),b=document.getElementById('toastBtn'),w=document.getElementById('toast');if(!m||!w)return;m.textContent=t;b.hidden=true;w.hidden=false;clearTimeout(say._t);say._t=setTimeout(function(){w.hidden=true},9000);}
+  var standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
+  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(!standalone&&btn){
+    if(ios){btn.hidden=false;btn.addEventListener('click',function(){say('En iPhone o iPad: abre esta página en Safari, pulsa el botón Compartir y elige «Añadir a pantalla de inicio».');});}
+    window.addEventListener('beforeinstallprompt',function(e){
+      e.preventDefault();dp=e;btn.hidden=false;
+      btn.onclick=function(){if(!dp)return;dp.prompt();dp.userChoice.finally(function(){dp=null;btn.hidden=true;});};
+    });
+    window.addEventListener('appinstalled',function(){btn.hidden=true;});
+  }
+  if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){});}
+  if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+    window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
+  }
 })();
 </script>
 </body>
