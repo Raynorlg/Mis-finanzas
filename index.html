@@ -1,4 +1,4 @@
-x<!doctype html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -54,8 +54,8 @@ h1{margin:4px 0 0;font:700 clamp(32px,6vw,48px)/1 var(--display);letter-spacing:
 .status[data-s="error"] i{background:var(--bad)}
 
 /* Pestañas de mes */
-.tabs{display:flex;gap:4px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:2px;scrollbar-width:thin}
-.tab{position:relative;flex:0 0 auto;min-width:62px;padding:8px 10px 7px;border:1px solid var(--line);background:var(--surface);border-radius:6px;text-align:center;line-height:1.15}
+.tabs{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:6px;margin-bottom:14px}
+.tab{position:relative;min-width:0;padding:10px 2px 9px;border:1px solid var(--line);background:var(--surface);border-radius:8px;text-align:center;line-height:1.15}
 .tab b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
 .tab span{display:block;font:400 10px var(--mono);color:var(--muted);margin-top:2px}
 .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -79,7 +79,7 @@ h2 span{font-weight:600;color:var(--muted)}
 
 /* Campos */
 .eur{position:relative;display:inline-block}
-.eur::after{content:"€";position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);font:400 12px var(--mono);pointer-events:none}
+.eur::after{content:var(--sym,"€");position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);font:400 12px var(--mono);pointer-events:none}
 .eur.big::after{font-size:18px;right:12px}
 .num{width:116px;text-align:right;font:400 13px var(--mono);font-variant-numeric:tabular-nums;padding:6px 24px 6px 8px;background:var(--surface2);border:1px solid var(--line);border-radius:5px}
 .num:hover{border-color:var(--muted)}
@@ -176,11 +176,37 @@ table.log tr.empty td{text-align:center;color:var(--muted);padding:26px 16px;fon
 .chip{border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12px;background:var(--surface2)}
 .chip b{font:500 12px var(--mono);margin-left:6px}
 
+/* Moneda y conversor */
+.hright{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+.ask{background:var(--warn-soft);border:1px solid var(--warn);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.ask p{margin:0 0 10px}
+.askbtns{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center}
+.ask .hintline{font-size:12px;color:var(--muted);margin:10px 0 0}
+.conv{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:12px}
+.conv summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:6px 16px;flex-wrap:wrap;padding:12px 16px}
+.conv summary::-webkit-details-marker{display:none}
+.conv .ct{font-weight:600}
+.conv .ct::before{content:"▸ ";color:var(--muted)}
+.conv[open] .ct::before{content:"▾ "}
+.conv .rate{font:400 13px var(--mono);color:var(--muted)}
+.convbody{padding:14px 16px 16px;border-top:1px solid var(--line2)}
+.convrow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:end}
+.convrow label,.convrow .lab{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:4px}
+.convrow .eur{display:block}
+.convrow .num{width:100%;font-size:16px;padding:8px 24px 8px 10px;background:var(--surface)}
+.out{display:flex;align-items:center;min-height:38px;padding:0 10px;border:1px dashed var(--muted);border-radius:5px;font:500 18px var(--mono);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.swap{width:40px;height:38px;border:1px solid var(--line);background:var(--surface2);border-radius:5px;font-size:18px}
+.swap:hover{border-color:var(--accent)}
+.src{margin:12px 0 6px;font-size:12px;color:var(--muted);max-width:75ch}
+@media (max-width:520px){.convrow{grid-template-columns:1fr}.swap{justify-self:start}}
+
 /* Aviso */
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;max-width:calc(100vw - 32px);display:flex;gap:14px;align-items:center;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
 .toast button{background:none;border:0;color:inherit;font-weight:600;text-decoration:underline;padding:0}
 .toast[hidden]{display:none}
 
+@media (max-width:1000px){.tabs{grid-template-columns:repeat(7,minmax(0,1fr))}}
+@media (max-width:420px){.tabs{gap:4px}.tab b{letter-spacing:.03em;font-size:11px}.tab span{font-size:9px}}
 @media (max-width:820px){
   .mhead{grid-template-columns:1fr}
   .addrow{grid-template-columns:1fr 1fr}
@@ -198,11 +224,29 @@ table.log tr.empty td{text-align:center;color:var(--muted);padding:26px 16px;fon
 <main class="wrap">
   <header class="top">
     <div>
-      <p class="eyebrow">Hoja mensual · euros · de noviembre 2026 a diciembre 2027</p>
+      <p class="eyebrow" id="eyebrow">Hoja mensual · euros · de noviembre 2026 a diciembre 2027</p>
       <h1>Mis finanzas</h1>
     </div>
-    <div class="status" id="status" data-s="loading" role="status"><i></i><span>Cargando…</span></div>
+    <div class="hright">
+      <div class="seg" role="group" aria-label="Moneda"><span>Moneda</span><div>
+        <button type="button" data-act="cur" data-cur="EUR">€ Euro</button>
+        <button type="button" data-act="cur" data-cur="USD">$ Dólar</button></div></div>
+      <div class="status" id="status" data-s="loading" role="status"><i></i><span>Cargando…</span></div>
+    </div>
   </header>
+  <div class="ask" id="curAsk" hidden role="group" aria-label="Cambio de moneda"></div>
+  <details class="conv" id="conv">
+    <summary><span class="ct">Conversor euro ⇄ dólar</span><span class="rate" id="convRate">Consultando el tipo de cambio…</span></summary>
+    <div class="convbody">
+      <div class="convrow">
+        <div><label for="cv-in" id="cv-inlab">Euros</label><div class="eur" id="cvSym"><input class="fld num" id="cv-in" inputmode="decimal" autocomplete="off" placeholder="100"></div></div>
+        <button type="button" class="swap" data-act="swap" aria-label="Invertir la conversión" title="Invertir">⇄</button>
+        <div><span class="lab" id="cv-outlab">Dólares</span><output class="out" id="cv-out" for="cv-in" aria-live="polite">—</output></div>
+      </div>
+      <p class="src" id="convSrc"></p>
+      <button type="button" class="link" data-act="refreshfx">Actualizar tipo de cambio</button>
+    </div>
+  </details>
   <nav class="tabs" id="tabs" role="tablist" aria-label="Meses"></nav>
   <section class="sheet" id="sheet" role="tabpanel" aria-labelledby="mtitle"></section>
 </main>
@@ -220,25 +264,38 @@ var uid=function(){return Math.random().toString(36).slice(2,9)+Date.now().toStr
 
 /* ---------- Formatos ---------- */
 var nfEur,nfDiff,nfIn,nfPct;
-try{
-  nfEur=new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',useGrouping:'always'});
-  nfDiff=new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',useGrouping:'always',signDisplay:'exceptZero'});
-  nfIn=new Intl.NumberFormat('es-ES',{minimumFractionDigits:0,maximumFractionDigits:2,useGrouping:'always'});
-  nfPct=new Intl.NumberFormat('es-ES',{style:'percent',maximumFractionDigits:1});
-}catch(e){
-  nfEur=new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'});
-  nfDiff=nfEur;nfIn=new Intl.NumberFormat('es-ES',{maximumFractionDigits:2});nfPct=new Intl.NumberFormat('es-ES',{style:'percent',maximumFractionDigits:1});
+function buildFormats(cur){
+  var loc=cur==='USD'?'en-US':'es-ES',c=cur==='USD'?'USD':'EUR';
+  try{
+    nfEur=new Intl.NumberFormat(loc,{style:'currency',currency:c,useGrouping:'always'});
+    nfDiff=new Intl.NumberFormat(loc,{style:'currency',currency:c,useGrouping:'always',signDisplay:'exceptZero'});
+    nfIn=new Intl.NumberFormat(loc,{minimumFractionDigits:0,maximumFractionDigits:2,useGrouping:'always'});
+    nfPct=new Intl.NumberFormat(loc,{style:'percent',maximumFractionDigits:1});
+  }catch(e){
+    nfEur=new Intl.NumberFormat(loc,{style:'currency',currency:c});
+    nfDiff=nfEur;nfIn=new Intl.NumberFormat(loc,{maximumFractionDigits:2});nfPct=new Intl.NumberFormat(loc,{style:'percent',maximumFractionDigits:1});
+  }
 }
+buildFormats('EUR');
 var eur=function(n){return nfEur.format(n)};
 var diffF=function(n){return nfDiff.format(n)};
 var inF=function(n){return n?nfIn.format(n):''};
 var pctF=function(n){return nfPct.format(n)};
-function parseNum(s){
-  s=String(s).replace(/[€\s ]/g,'');
+function parseNum(s,cur){
+  cur=cur||(typeof S!=='undefined'&&S?S.currency:'EUR');
+  s=String(s).replace(/[€$\s\u00a0]/g,'');
   if(s==='')return NaN;
   if(!/^-?[\d.,]+$/.test(s))return NaN;
-  if(s.indexOf(',')>=0){s=s.replace(/\./g,'').replace(',','.');}
-  else if(/^\d{1,3}(\.\d{3})+$/.test(s)){s=s.replace(/\./g,'');}
+  var hasC=s.indexOf(',')>=0,hasD=s.indexOf('.')>=0;
+  if(hasC&&hasD){
+    var dec=s.lastIndexOf(',')>s.lastIndexOf('.')?',':'.',th=dec===','?'.':',';
+    s=s.split(th).join('').replace(dec,'.');
+  }else if(hasC){
+    if(cur==='USD'&&/^-?\d{1,3}(,\d{3})+$/.test(s))s=s.replace(/,/g,'');
+    else s=s.replace(',','.');
+  }else if(hasD){
+    if(cur!=='USD'&&/^-?\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');
+  }
   var n=Number(s);
   return isFinite(n)?n:NaN;
 }
@@ -267,12 +324,12 @@ var DEF_CATS=[
   {id:'ahorro',name:'Ahorro',type:'ahorro',pct:15}
 ];
 var LS_KEY='misfinanzas.v1';
-function defState(){return {v:1,mode:'extra',cats:DEF_CATS.map(function(c){return Object.assign({},c)}),months:{},updatedAt:0}}
+function defState(){return {v:1,mode:'extra',currency:'EUR',cats:DEF_CATS.map(function(c){return Object.assign({},c)}),months:{},updatedAt:0}}
 function objNum(o){var r={};if(o&&typeof o==='object'){Object.keys(o).forEach(function(k){var n=Number(o[k]);if(isFinite(n)&&n>=0)r[k]=n;});}return r}
 function fixState(x){
   var d=defState();
   if(!x||typeof x!=='object')return d;
-  var s={v:1,mode:x.mode==='cat'?'cat':'extra',cats:[],months:{},updatedAt:Number(x.updatedAt)||0};
+  var s={v:1,mode:x.mode==='cat'?'cat':'extra',currency:x.currency==='USD'?'USD':'EUR',cats:[],months:{},updatedAt:Number(x.updatedAt)||0};
   if(Array.isArray(x.cats)){x.cats.forEach(function(c){
     if(c&&c.id&&c.name&&(c.type==='gasto'||c.type==='ahorro'||c.type==='ingreso')){
       s.cats.push({id:String(c.id),name:String(c.name).slice(0,60),type:c.type,pct:Math.max(0,Number(c.pct)||0),custom:!!c.custom});
@@ -295,6 +352,7 @@ function fixState(x){
 function lsRead(){try{var r=localStorage.getItem(LS_KEY);return r?JSON.parse(r):null}catch(e){return null}}
 function lsWrite(){try{localStorage.setItem(LS_KEY,JSON.stringify(S))}catch(e){}}
 var S=fixState(lsRead());
+buildFormats(S.currency);
 var cur=(function(){var t=todayISO().slice(0,7);return KEYS.indexOf(t)>=0?t:KEYS[0]})();
 
 function ensureMonth(k){
@@ -338,7 +396,7 @@ function initDb(){
         dbDoc=doc;
         if(snap.exists){
           var remote=fixState(snap.data());
-          if(remote.updatedAt>=S.updatedAt){S=remote;Object.keys(S.months).forEach(function(k){sortEntries(S.months[k])});lsWrite();fullRender();setStatus('saved');return;}
+          if(remote.updatedAt>=S.updatedAt){S=remote;buildFormats(S.currency);Object.keys(S.months).forEach(function(k){sortEntries(S.months[k])});lsWrite();fullRender();setStatus('saved');return;}
         }
         if(S.updatedAt>0){setStatus('pending');return flush();}
         setStatus('saved');
@@ -420,7 +478,7 @@ function renderSheet(){
       '<div class="macts">'+(i>0?'<button type="button" class="link" id="copyPrev" data-act="copyprev">Copiar cifras de '+MONTHS[keyParts(KEYS[i-1]).m].toLowerCase()+'</button>':'')+
       '<button type="button" class="btn ghost" id="dlBtn" data-act="download" hidden title="Un PDF de este mes, listo para imprimir">Descargar informe (PDF)</button></div></div>'+
     '<div class="income"><label for="income">Ingreso mensual</label>'+
-      '<div class="eur big"><input class="num" id="income" data-f="income" inputmode="decimal" autocomplete="off" placeholder="Ej. 1.400"></div>'+
+      '<div class="eur big"><input class="num" id="income" data-f="income" inputmode="decimal" autocomplete="off" placeholder="Ej. '+nfIn.format(1400)+'"></div>'+
       '<p class="hint" id="incomeHint"></p></div>'+
   '</div>'+
   '<div class="band"><h3>Presupuesto</h3><span class="eyebrow">Escribe el ingreso y el reparto se calcula solo</span></div>'+
@@ -454,7 +512,7 @@ function renderSheet(){
     '<div><label for="a-date">Fecha</label><input class="fld" type="date" id="a-date" name="date" min="'+rg.min+'" max="'+rg.max+'" value="'+dd+'"></div>'+
     '<div class="grow"><label for="a-desc">Descripción</label><input class="fld" id="a-desc" name="desc" maxlength="80" placeholder="Qué fue"></div>'+
     '<div><label for="a-cat">Categoría</label><select class="fld" id="a-cat" name="cat">'+catOptions('gextra')+'</select></div>'+
-    '<div><label for="a-amt">Monto</label><div class="eur"><input class="fld num" id="a-amt" name="amt" inputmode="decimal" placeholder="0,00"></div></div>'+
+    '<div><label for="a-amt">Monto</label><div class="eur"><input class="fld num" id="a-amt" name="amt" inputmode="decimal" placeholder="'+(S.currency==='USD'?'0.00':'0,00')+'"></div></div>'+
     '<button class="btn" type="submit">Añadir gasto</button>'+
   '</form>'+
   '<p class="err" id="addErr" role="alert"></p>'+
@@ -552,7 +610,7 @@ function refresh(just){
   if(note)note.textContent=S.mode==='extra'?'Todo lo que anotes aquí se suma a «Gastos extra» del presupuesto. La categoría te sirve para ver en qué se va el dinero.':'Cada gasto se suma a la categoría que elijas. Los marcados como «Gastos extra» van a esa fila.';
   document.querySelectorAll('[data-act="mode"]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===S.mode))});
 }
-function fullRender(){renderTabs();renderSheet();refresh();}
+function fullRender(){syncCurUi();renderTabs();renderSheet();refresh();}
 
 /* ---------- Avisos ---------- */
 var toastT=null;
@@ -620,6 +678,19 @@ document.addEventListener('click',function(ev){
     cur=b.dataset.key;fullRender();
     var sel=document.querySelector('.tab[aria-selected="true"]');if(sel)sel.focus({preventScroll:true});
     if(sel&&sel.scrollIntoView)sel.scrollIntoView({inline:'center',block:'nearest'});
+  }else if(a==='cur'){
+    if(b.dataset.cur!==S.currency)requestCurrency(b.dataset.cur);
+  }else if(a==='curconv'){
+    var want=b.dataset.cur,f=want==='USD'?fx.rate:1/fx.rate;
+    if(fx.rate>0)setCurrency(want,f);
+  }else if(a==='curkeep'){
+    setCurrency(b.dataset.cur,null);
+  }else if(a==='curcancel'){
+    $('#curAsk').hidden=true;
+  }else if(a==='swap'){
+    conv.from=conv.from==='EUR'?'USD':'EUR';$('#cv-in').value='';convUi();convCompute();
+  }else if(a==='refreshfx'){
+    loadFx();
   }else if(a==='download'){
     downloadReport();
   }else if(a==='mode'){
@@ -673,6 +744,119 @@ document.addEventListener('submit',function(ev){
   }
 });
 
+/* ---------- Moneda ---------- */
+function syncCurUi(){
+  var u=S.currency==='USD';
+  document.documentElement.style.setProperty('--sym',u?'"$"':'"€"');
+  var e=$('#eyebrow');if(e)e.textContent='Hoja mensual · '+(u?'dólares':'euros')+' · de noviembre 2026 a diciembre 2027';
+  document.querySelectorAll('[data-act="cur"]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.cur===S.currency))});
+}
+function hasData(){
+  return Object.keys(S.months).some(function(k){var m=S.months[k];return m.income||m.entries.length||Object.keys(m.budget).length||Object.keys(m.manual).length;});
+}
+function convertAll(f){
+  Object.keys(S.months).forEach(function(k){
+    var m=S.months[k];
+    if(m.income)m.income=round2(m.income*f)||null;
+    Object.keys(m.budget).forEach(function(id){m.budget[id]=round2(m.budget[id]*f)});
+    Object.keys(m.manual).forEach(function(id){var v=round2(m.manual[id]*f);if(v>0)m.manual[id]=v;else delete m.manual[id];});
+    m.entries.forEach(function(e){e.amt=Math.max(0.01,round2(e.amt*f))});
+  });
+}
+function setCurrency(want,factor){
+  if(factor)convertAll(factor);
+  S.currency=want;buildFormats(want);
+  $('#curAsk').hidden=true;
+  touch();fullRender();
+  toast(factor?'Cifras convertidas a '+(want==='USD'?'dólares':'euros')+'.':'Moneda cambiada a '+(want==='USD'?'dólares':'euros')+'.');
+}
+function requestCurrency(want){
+  if(!hasData()){setCurrency(want,null);return;}
+  var el=$('#curAsk'),from=S.currency,nm={EUR:'euros',USD:'dólares'},can=fx.rate>0;
+  var txt=can?'Tipo de referencia del BCE'+(fx.date?' del '+fmtDate(fx.date):'')+': 1 € = '+nfRate.format(fx.rate)+' US$. El resultado se redondea a céntimos.':'El tipo de cambio no está disponible ahora, por eso no puedo ofrecerte la conversión.';
+  el.innerHTML='<p><b>Cambiar a '+nm[want]+'.</b> Ya tienes cifras anotadas en '+nm[from]+'. ¿Qué hago con ellas?</p><div class="askbtns">'+
+    (can?'<button type="button" class="btn" data-act="curconv" data-cur="'+want+'">Convertirlas al cambio oficial</button>':'')+
+    '<button type="button" class="btn ghost" data-act="curkeep" data-cur="'+want+'">Dejarlas igual, solo cambia la moneda</button>'+
+    '<button type="button" class="link" data-act="curcancel">Cancelar</button></div><p class="hintline">'+esc(txt)+'</p>';
+  el.hidden=false;
+  var first=el.querySelector('button');if(first)first.focus();
+}
+
+/* ---------- Conversor y tipo de cambio (fuente: Banco Central Europeo) ---------- */
+var conv={from:'EUR'};
+var fx={rate:null,date:null,src:null,state:'loading',at:0};
+var FX_KEY='misfinanzas.fx';
+var nfRate=new Intl.NumberFormat('es-ES',{minimumFractionDigits:4,maximumFractionDigits:4});
+var fmtCache={};
+function fmtMoney(n,cur){
+  if(!fmtCache[cur]){
+    var loc=cur==='USD'?'en-US':'es-ES';
+    try{fmtCache[cur]=new Intl.NumberFormat(loc,{style:'currency',currency:cur,useGrouping:'always'});}
+    catch(e){fmtCache[cur]=new Intl.NumberFormat(loc,{style:'currency',currency:cur});}
+  }
+  return fmtCache[cur].format(n);
+}
+function fetchJson(url,ms){
+  var ctl=('AbortController' in window)?new AbortController():null;
+  var t=setTimeout(function(){if(ctl)ctl.abort()},ms);
+  return fetch(url,{cache:'no-store',signal:ctl?ctl.signal:undefined}).then(function(r){
+    clearTimeout(t);if(!r.ok)throw new Error('http '+r.status);return r.json();
+  },function(e){clearTimeout(t);throw e;});
+}
+function fromEcb(j){
+  var ds=j.dataSets[0],key=Object.keys(ds.series)[0],obs=ds.series[key].observations;
+  var ks=Object.keys(obs).map(Number).sort(function(a,b){return a-b}),k=ks[ks.length-1];
+  var vals=j.structure.dimensions.observation[0].values;
+  return {rate:Number(obs[k][0]),date:(vals[k]||vals[vals.length-1]).id,src:'ecb'};
+}
+function fromFrankfurter(j){return {rate:Number(j.rates&&j.rates.USD),date:j.date||null,src:'frankfurter'};}
+function fxCache(){try{var o=JSON.parse(localStorage.getItem(FX_KEY));return o&&o.rate>0?o:null;}catch(e){return null;}}
+function loadFx(){
+  fx.state='loading';renderFx();
+  var ecb='https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?lastNObservations=1&format=jsondata';
+  var frk='https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD';
+  return fetchJson(ecb,8000).then(fromEcb).catch(function(){return fetchJson(frk,8000).then(fromFrankfurter);}).then(function(r){
+    if(!(r.rate>0.3&&r.rate<3))throw new Error('dato no válido');
+    fx.rate=r.rate;fx.date=r.date;fx.src=r.src;fx.state='ok';fx.at=Date.now();
+    try{localStorage.setItem(FX_KEY,JSON.stringify({rate:r.rate,date:r.date,src:r.src}));}catch(e){}
+  }).catch(function(){
+    var c=fxCache();
+    if(c){fx.rate=c.rate;fx.date=c.date;fx.src=c.src;fx.state='cache';}
+    else{fx.rate=null;fx.date=null;fx.src=null;fx.state='error';}
+  }).then(renderFx);
+}
+function convUi(){
+  var from=conv.from,to=from==='EUR'?'USD':'EUR';
+  $('#cv-inlab').textContent=from==='EUR'?'Euros':'Dólares';
+  $('#cv-outlab').textContent=to==='EUR'?'Euros':'Dólares';
+  $('#cvSym').style.setProperty('--sym',from==='USD'?'"$"':'"€"');
+}
+function convCompute(){
+  var out=$('#cv-out'),inp=$('#cv-in');if(!out||!inp)return;
+  var to=conv.from==='EUR'?'USD':'EUR';
+  inp.removeAttribute('aria-invalid');
+  if(!(fx.rate>0)||inp.value.trim()===''){out.textContent='—';return;}
+  var v=parseNum(inp.value,conv.from);
+  if(!(v>=0)||v>1e12){inp.setAttribute('aria-invalid','true');out.textContent='—';return;}
+  out.textContent=fmtMoney(round2(conv.from==='EUR'?v*fx.rate:v/fx.rate),to);
+}
+function renderFx(){
+  var r=$('#convRate'),s=$('#convSrc');if(!r||!s)return;
+  var d=fx.date?fmtDate(fx.date):'';
+  if(fx.state==='loading'&&!fx.rate){r.textContent='Consultando el tipo de cambio…';s.textContent='';}
+  else if(fx.state==='error'){
+    r.textContent='Tipo de cambio no disponible';
+    s.textContent='No se pudo consultar el tipo de cambio oficial y no hay ningún dato guardado. Revisa tu conexión y pulsa «Actualizar». No se muestra ninguna cifra estimada.';
+  }else if(fx.rate){
+    var inv=1/fx.rate;
+    r.textContent=(fx.state==='cache'?'Último dato guardado · ':'BCE · ')+'1 € = '+nfRate.format(fx.rate)+' US$'+(d?' · '+d:'');
+    s.textContent=(fx.state==='cache'?'No se pudo actualizar ahora; este es el último tipo guardado en este aparato. ':'')+
+      'Fuente: tipo de referencia del Banco Central Europeo'+(fx.src==='frankfurter'?' (publicado por el servicio Frankfurter, sin modificar)':'')+
+      (d?', del '+d:'')+'. El BCE lo publica una vez por día hábil, hacia las 16:00 CET; no es un precio en vivo del mercado y tu banco aplicará su propio cambio. 1 US$ = '+nfRate.format(inv)+' € (calculado con el mismo tipo).';
+  }
+  convCompute();
+}
+
 /* ---------- Informe en PDF ---------- */
 var dl=null;
 function pdfReady(){return !!(window.jspdf&&window.jspdf.jsPDF)}
@@ -687,7 +871,7 @@ function buildPdf(){
   doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(INK[0],INK[1],INK[2]);
   doc.text('Informe de '+label,M,56);
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(MUTED[0],MUTED[1],MUTED[2]);
-  doc.text('Mis finanzas · cifras en euros · generado el '+fmtDate(todayISO()),M,72);
+  doc.text('Mis finanzas · cifras en '+(S.currency==='USD'?'dólares':'euros')+' · generado el '+fmtDate(todayISO()),M,72);
   var colorFor=function(n){return n>0.004?GOOD:n<-0.004?BAD:INK};
 
   /* Resumen */
@@ -771,6 +955,12 @@ function downloadReport(){
 setStatus('loading');
 fullRender();
 initDb();
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='cv-in')convCompute();});
+convUi();
+fx.state='loading';
+loadFx();
+setInterval(function(){if(!document.hidden&&Date.now()-fx.at>30*60*1000)loadFx();},5*60*1000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&Date.now()-fx.at>30*60*1000)loadFx();});
 if(window.claude&&window.claude.use){window.claude.use('downloads').then(function(d){dl=d;syncDl();}).catch(function(){});}
 })();
 </script>
